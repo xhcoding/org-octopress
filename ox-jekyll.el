@@ -92,6 +92,12 @@ description: Instructions on Upgrading Octopress
   :group 'org-export-jekyll
   :type 'string)
 
+(defcustom org-jekyll-mathjax ""
+  "Default don't load mathjax/katex script in this article."
+  :group 'org-export-jekyll
+  :type 'string
+  )
+
 (defcustom org-jekyll-use-src-plugin nil
    "If t, org-jekyll exporter eagerly uses plugins instead of
 org-mode's original HTML stuff. For example:
@@ -125,7 +131,8 @@ makes:
     (:jekyll-categories "JEKYLL_CATEGORIES" nil org-jekyll-categories)
     (:jekyll-tags "JEKYLL_TAGS" nil org-jekyll-tags)
     (:jekyll-published "JEKYLL_PUBLISHED" nil org-jekyll-published)
-    (:jekyll-comments "JEKYLL_COMMENTS" nil org-jekyll-comments)))
+    (:jekyll-comments "JEKYLL_COMMENTS" nil org-jekyll-comments)
+    (:jekyll-mathjax "JEKYLL_MATHJAX" nil org-jekyll-mathjax)))
 
 
 ;;; Internal Filters
@@ -195,6 +202,8 @@ holding export options."
          (org-jekyll--get-option info :jekyll-published org-jekyll-published))
         (comments
          (org-jekyll--get-option info :jekyll-comments))
+        (mathjax
+         (org-jekyll--get-option info :jekyll-mathjax))
         (convert-to-yaml-list
          (lambda (arg)
            (mapconcat #'(lambda (text)(concat "\n- " text)) (split-string arg) " "))))
@@ -209,6 +218,7 @@ holding export options."
      "\ntags: "       (funcall convert-to-yaml-list tags)
      "\npublished: "  published
      "\ncomments: "   comments
+     "\nmathjax: "    mathjax
      "\n---\n")))
 
 ;;; Filename and Date Helper
@@ -326,7 +336,7 @@ Return output file name."
                        "\n#+JEKYLL_CATEGORIES: " categories
                        "\n#+JEKYLL_TAGS: "       tags
                        "\n#+JEKYLL_PUBLISHED: "  published
-                       "\n\n* \n\n{{{more}}}"))))))
+                       "\n\n* \n\n#+HTML:<!-- more --> "))))))
 
 ;;; provide
 
